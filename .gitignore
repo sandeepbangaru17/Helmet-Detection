@@ -17,8 +17,11 @@ yolov8n.pt
 uploads/
 outputs/
 models/*.pt
+!models/best.pt
 !models/.gitkeep
 
-# Testing scripts (cleaned up)
-test_api.py
-samples/
+# Exclude large/useless files
+helmet_detection_cloud.zip
+prepare_cloud.py
+colab_train.ipynb
+yolov8n.pt

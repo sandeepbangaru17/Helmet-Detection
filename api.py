@@ -13,20 +13,25 @@ app = FastAPI(title="Helmet Detection API")
 # Setup directories
 UPLOAD_DIR = "uploads"
 OUTPUT_DIR = "outputs"
-WEIGHTS_PATH = "runs/detect/helmet_detection/weights/best.pt"
+MODELS_DIR = "models"
+WEIGHTS_PATH = os.path.join(MODELS_DIR, "best.pt")
 FALLBACK_WEIGHTS = "yolov8n.pt"
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+os.makedirs(MODELS_DIR, exist_ok=True)
 
 # Load the model
-# Check if custom weights exist, otherwise fallback to pretrained model
+# Check if custom weights exist in models/, otherwise check the training run, otherwise fallback
 if os.path.exists(WEIGHTS_PATH):
     model = YOLO(WEIGHTS_PATH)
-    print(f"Loaded custom weights from {WEIGHTS_PATH}")
+    print(f"✅ Loaded premium custom weights from {WEIGHTS_PATH}")
+elif os.path.exists("runs/detect/helmet_detection/weights/best.pt"):
+    model = YOLO("runs/detect/helmet_detection/weights/best.pt")
+    print("✅ Loaded custom weights from local training run.")
 else:
     model = YOLO(FALLBACK_WEIGHTS)
-    print(f"Loaded fallback weights: {FALLBACK_WEIGHTS}")
+    print(f"⚠️ Using fallback weights: {FALLBACK_WEIGHTS}")
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
