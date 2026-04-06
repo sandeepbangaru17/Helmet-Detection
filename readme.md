@@ -1,83 +1,91 @@
-# 👷 Helmet Detection Web System (YOLOv8 + FastAPI + Streamlit)
+<div align="center">
+  <h1>👷 Helmet Detection System</h1>
+  <p><i>A Production-Quality Object Detection Suite Powered by YOLOv8, FastAPI, and Streamlit</i></p>
 
-A production-ready, end-to-end object detection system designed to identify helmets and persons in real-time or from uploaded images. This project demonstrates high-fidelity integration between a computer vision model, a robust backend, and a modern frontend UI.
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/YOLOv8-00629B?style=for-the-badge&logo=ultralytics&logoColor=white" />
+  <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" />
+  <img src="https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" />
+</div>
 
-## 🚀 Features
+---
 
-*   **Custom YOLOv8 Training**: Automated training script for fine-tuning on helmet datasets.
-*   **FastAPI Backend**: High-performance API with a dedicated `/predict` endpoint for inference.
-*   **Streamlit Frontend**: A premium, user-friendly interface for image uploads and result visualization.
-*   **Dual Mode Weights**: Automatically uses custom `best.pt` weights if available, or falls back to the pretrained `yolov8n.pt`.
-*   **Side-by-Side Visualization**: View original vs. processed images with bounding boxes and confidence scores.
+## 🌟 Project Overview
+This end-to-end vision application is designed to enhance industrial safety by monitoring construction sites and workspaces for safety gear compliance. Utilizing the state-of-the-art **YOLOv8** model, the system identifies helmets, safety vests, and personal protective equipment in real-time.
 
-## 🛠️ Tech Stack
+## 🚀 Key Features
+- **⚡ Unified Orchestration**: Run the entire system (Backend + Frontend) with a single command.
+- **🛠️ Custom Dataset Integration**: Fully integrated with the high-quality *Construction Site Safety* dataset from Roboflow.
+- **🖼️ Universal Image Support**: Native support for JPG, PNG, WEBP, BMP, and TIFF with automatic EXIF orientation management.
+- **📊 Interactive Dashboard**: A premium Streamlit UI providing side-by-side detection comparisons and confidence analytics.
+- **⚙️ Standalone CLI**: Direct inference scripts for batch processing of local images and videos.
 
-*   **Model**: [Ultralytics YOLOv8](https://github.com/ultralytics/ultralytics)
-*   **Backend**: FastAPI, Uvicorn, Python-Multipart
-*   **Frontend**: Streamlit, Requests, Pillow
-*   **Image Processing**: OpenCV, NumPy
+---
 
-## 📁 Project Structure
+## 🛠️ Technology Stack
 
+| Layer | Technology | Purpose |
+| :--- | :--- | :--- |
+| **Model** | Ultralytics YOLOv8 | Core object detection and inference |
+| **Backend** | FastAPI / Uvicorn | High-performance asynchronous API services |
+| **Frontend** | Streamlit | Modern, interactive web-based user interface |
+| **Data** | Roboflow API | Automated acquisition of safety datasets |
+| **Processing** | OpenCV / Pillow | Advanced image handling and metadata extraction |
+
+---
+
+## 📁 System Architecture
 ```text
 helmet-detection/
-├── api.py           # FastAPI backend server
-├── app.py           # Streamlit frontend UI
-├── train.py         # YOLOv8 training script
-├── detect.py        # Standalone inference script
-├── requirements.txt # Project dependencies
-├── data.yaml        # Dataset configuration (helmet, no_helmet)
-├── models/          # Persistent storage for model weights
-├── uploads/         # Directory for uploaded images
-├── outputs/         # Directory for processed detections
-└── README.md        # Documentation
+├── main.py           # Single-entry orchestration script (Starts both servers)
+├── api.py            # FastAPI backend (Inference & Media logic)
+├── app.py            # Streamlit frontend (Dashboard & UI)
+├── train.py          # Custom model training infrastructure
+├── detect.py         # Standalone command-line inference tool
+├── download_data.py  # Automated Roboflow dataset acquisition
+├── data.yaml         # YOLOv8 class and path configuration
+├── requirements.txt  # Project dependency manifest
+├── README.md         # Professional documentation
+└── datasets/         # Local storage for training data (Git ignored)
 ```
 
-## ⚙️ Setup Instructions
+---
 
-### 1. Clone the Repository
-```bash
-git clone <repository-url>
-cd Helemt-Detection
-```
+## ⚙️ Getting Started
 
-### 2. Install Dependencies
-It is recommended to use a virtual environment:
+### 1. Installation
+Clone the repository and install the verified dependencies in your environment:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. (Optional) Train the Model
-If you have a custom dataset organized as per `data.yaml`:
+### 2. Dataset Setup (One-time)
+If you wish to download the training dataset automatically:
+1. Obtain your Roboflow API Key.
+2. Run the provided download tool:
+```bash
+python download_data.py
+```
+
+### 3. Launching the Application
+Launch both the **FastAPI Backend** and the **Streamlit Dashboard** simultaneously with the unified command:
+```bash
+python main.py
+```
+> [!TIP]
+> The system will automatically open your web browser to `http://localhost:8501` once both servers have initialized!
+
+---
+
+## 🔍 Training Your Own Model
+To fine-tune the YOLOv8 model specifically for your local data:
 ```bash
 python train.py
 ```
-This saves the best weights to `runs/detect/helmet_detection/weights/best.pt`.
+This will generate optimized weights in `runs/detect/helmet_detection/weights/best.pt`, which the system will prioritize automatically.
 
-## ▶️ How to Run
+---
 
-### 1. Start the FastAPI Backend
-```bash
-uvicorn api:app --reload
-```
-The API will be available at `http://localhost:8000`. You can explore the `/docs` for Swagger UI.
-
-### 2. Start the Streamlit Frontend
-In a new terminal:
-```bash
-streamlit run app.py
-```
-
-### 3. Run Standalone Detection
-To run inference on a local file without the web UI:
-```bash
-python detect.py --source path/to/your/image.jpg --weights yolov8n.pt
-```
-
-## 🧪 Detection Logic
-The backend uses `results[0].plot()` to draw bounding boxes and labels automatically with consistent colors. Images are processed in RGB format to ensure compatibility between PIL (Frontend) and OpenCV (Inference).
-
-## 💡 Production Considerations
-*   **Folder Cleanup**: Add a scheduled task to clear `uploads/` and `outputs/`.
-*   **GPU Support**: If available, YOLOv8 will automatically utilize CUDA for faster inference.
-*   **Security**: In production, secure the FastAPI endpoint and validate file sizes/formats strictly.
+<div align="center">
+  <p>Built with ❤️ for Industrial Safety and Computer Vision Excellence</p>
+</div>

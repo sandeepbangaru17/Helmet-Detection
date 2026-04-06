@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from ultralytics import YOLO
 import cv2
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageOps
 import io
 import os
 import base64
@@ -41,7 +41,8 @@ async def predict(file: UploadFile = File(...)):
     try:
         # 2. Read image content
         contents = await file.read()
-        image = Image.open(io.BytesIO(contents)).convert("RGB")
+        image = Image.open(io.BytesIO(contents))
+        image = ImageOps.exif_transpose(image).convert("RGB") # Auto-rotate and convert
         img_np = np.array(image)
         
         # Save original image to uploads

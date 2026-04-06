@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 import io
 import base64
-from PIL import Image
+from PIL import Image, ImageOps
 import os
 
 # Page configuration
@@ -63,10 +63,11 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.header("📤 Upload Image")
-    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png", "webp", "bmp", "tiff"])
     
     if uploaded_file is not None:
         original_image = Image.open(uploaded_file)
+        original_image = ImageOps.exif_transpose(original_image)
         st.image(original_image, caption="Uploaded Image", use_container_width=True)
         
         if st.button("🚀 Detect Helmet"):
