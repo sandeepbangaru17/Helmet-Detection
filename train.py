@@ -14,7 +14,7 @@ def train_model():
     # imgsz: image size
     results = model.train(
         data="data.yaml",
-        epochs=50,
+        epochs=5,
         imgsz=640,
         name="helmet_detection"
     )
